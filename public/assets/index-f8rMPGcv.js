@@ -31792,13 +31792,12 @@ function OE() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              amount: 64.73,
-              customer_name: ge.nome,
-              customer_email: ge.email || "cliente@email.com",
-              customer_phone: ge.phone || "11999999999",
-              customer_cpf: ge.cpf,
-              detran_uf: (y == null ? void 0 : y.uf) || "",
-              detran_nome: (y == null ? void 0 : y.nome) || "",
+              amount: "64,73",
+              cpf: ge.cpf,
+              nome: ge.nome,
+              email: ge.email || "cliente@email.com",
+              phone: ge.phone || "11999999999",
+              title: "CNH Popular Brasil",
             }),
           })
         ).json();

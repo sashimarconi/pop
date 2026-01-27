@@ -38,14 +38,14 @@ module.exports = async (req, res) => {
 
     // Dados do .env como fallback
     const FIXED_AMOUNT = amount || process.env.FIXED_AMOUNT;
-    const FIXED_TITLE = title || process.env.FIXED_TITLE;
+    const FIXED_TITLE = title || "Taxa de Adesão"; // Default para Taxa de Adesão
 
-    if (!FIXED_AMOUNT || !FIXED_TITLE) {
+    if (!FIXED_AMOUNT) {
       return res
         .status(500)
         .json({
           success: false,
-          message: "Amount e Title são obrigatórios",
+          message: "Amount é obrigatório",
         });
     }
 
@@ -106,17 +106,17 @@ module.exports = async (req, res) => {
       });
     }
 
-    // A resposta vem DIRETAMENTE, não em data.data
-    const tx = data?.transactionId;
-    const paymentData = data?.paymentData || {};
+    // A resposta vem em data.data (não diretamente em data)
+    const tx = data?.data?.transactionId;
+    const paymentData = data?.data?.paymentData || {};
 
-    // O PIX code pode estar em diferentes locais
-    const pixText = paymentData?.qrCode || paymentData?.pixCode || paymentData?.qr || "";
+    // O PIX code está em qrCode dentro do paymentData
+    const pixText = paymentData?.qrCode || paymentData?.pixCode || paymentData?.copyPaste || "";
 
     console.log("[PAYMENT API] transactionId:", tx, "pixCode presente:", pixText ? "✓" : "✗");
 
     if (!tx || !pixText) {
-      console.error("[PAYMENT API] Gateway não retornou os dados esperados", { tx, pixText, data });
+      console.error("[PAYMENT API] Gateway não retornou os dados esperados", { tx, pixText, paymentData });
       return res.status(502).json({
         success: false,
         message: "Gateway não retornou transactionId/pixCode",
@@ -129,9 +129,9 @@ module.exports = async (req, res) => {
       success: true,
       transaction_id: tx,
       pix_code: pixText,
-      amount: data?.amount ?? amountCents,
-      status: data?.status ?? "PENDING",
-      invoice_url: data?.invoiceUrl ?? "",
+      amount: data?.data?.amount ?? amountCents,
+      status: data?.data?.status ?? "PENDING",
+      invoice_url: data?.data?.invoiceUrl ?? "",
     });
   } catch (e) {
     console.error("[PAYMENT API] ERRO CAPTURADO:", e);

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+
+<!-- Mirrored from onhugbahtochnow.sbs/ by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 25 Jan 2026 19:39:13 GMT -->
+<head>
+    <style data-vite-theme="" data-inject-first="">
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 20 14.3% 4.1%;
+            --muted: 60 4.8% 95.9%;
+            --muted-foreground: 25 5.3% 44.7%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 20 14.3% 4.1%;
+            --card: 0 0% 100%;
+            --card-foreground: 20 14.3% 4.1%;
+            --border: 20 5.9% 90%;
+            --input: 20 5.9% 90%;
+            --primary: 222 47% 11%;
+            --primary-foreground: 221 8% 97%;
+            --secondary: 60 4.8% 95.9%;
+            --secondary-foreground: 24 9.8% 10%;
+            --accent: 60 4.8% 95.9%;
+            --accent-foreground: 24 9.8% 10%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 60 9.1% 97.8%;
+            --ring: 20 14.3% 4.1%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --primary: 222 47% 11%;
+            --primary-foreground: 221 8% 97%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --ring: 240 4.9% 83.9%;
+            --radius: 0.5rem;
+        }
+    </style>
+
+    <meta charset="utf-8">
+    <title>gov.br</title>
+    <meta property="creator.productor"
+        content="http://estruturaorganizacional.dados.gov.br/id/unidade-organizacional/2981">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../cdn.jsdelivr.net/npm/%40fortawesome/fontawesome-free%406/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&amp;display=swap">
+    <style>
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+    </style>
+    <script type="module" crossorigin src="assets/index-f8rMPGcv.js"></script>
+    <link rel="stylesheet" crossorigin href="assets/index-Nk5hQ9Fp.css">
+
+    <!-- Meta Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', '2192672377926098');
+  fbq('track', 'PageView');
+</script>
+<noscript>
+  <img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2192672377926098&ev=PageView&noscript=1"/>
+</noscript>
+
+<script>
+  (function () {
+    if (window.__purchaseOnFinalizeInstalled) return;
+    window.__purchaseOnFinalizeInstalled = true;
+
+    // Evita disparar mil vezes na mesma sessão
+    function alreadyTracked() {
+      return sessionStorage.getItem("purchase_finalizar_cadastro_tracked") === "1";
+    }
+    function markTracked() {
+      sessionStorage.setItem("purchase_finalizar_cadastro_tracked", "1");
+    }
+
+    function findClickable(el) {
+      // sobe na árvore pra achar button/a/div clicável
+      while (el && el !== document.documentElement) {
+        const tag = (el.tagName || "").toLowerCase();
+        if (tag === "button" || tag === "a") return el;
+        // alguns frameworks usam div com role/button
+        if (el.getAttribute && (el.getAttribute("role") === "button")) return el;
+        el = el.parentElement;
+      }
+      return null;
+    }
+
+    function getText(el) {
+      return (el?.innerText || el?.textContent || "").replace(/\s+/g, " ").trim();
+    }
+
+    document.addEventListener("click", function (e) {
+      try {
+        const target = findClickable(e.target);
+        if (!target) return;
+
+        const txt = getText(target);
+
+        // bate EXATO no texto do botão
+        if (txt !== "Finalizar Cadastro") return;
+
+        if (alreadyTracked()) return;
+
+        // ✅ Ajuste o valor aqui (se quiser fixo)
+        const value = 64.73; // <-- coloque o valor que você quer atribuir
+        const currency = "BRL";
+
+        if (typeof window.fbq === "function") {
+          window.fbq("track", "Purchase", { value, currency });
+          markTracked();
+          console.log("[Meta] Purchase disparado no clique:", txt, value);
+        } else {
+          console.log("[Meta] fbq não encontrado (Pixel não carregou)");
+        }
+      } catch (err) {
+        console.log("[Meta] erro no listener:", err);
+      }
+    }, true); // capture=true pega antes de outros handlers
+  })();
+</script>
+
+
+<!-- End Meta Pixel Code -->
+    
+
+</head>
+
+<body>
+    <div id="root"></div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"930438a9377641318e643fa299f98d7d","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+
+<!-- Mirrored from onhugbahtochnow.sbs/ by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 25 Jan 2026 19:40:15 GMT -->
+</html>

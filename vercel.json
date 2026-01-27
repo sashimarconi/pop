@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/payment/payment.php", "destination": "/api/payment/payment" },
+    { "source": "/(.*)", "destination": "/public/$1" }
+  ]
+}

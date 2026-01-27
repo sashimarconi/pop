@@ -106,20 +106,20 @@ module.exports = async (req, res) => {
       });
     }
 
-    const tx = data?.data?.transactionId;
-    const pd = data?.data?.paymentData || {};
+    // A resposta vem DIRETAMENTE, não em data.data
+    const tx = data?.transactionId;
+    const paymentData = data?.paymentData || {};
 
-    // O front espera pix_code (texto copia e cola)
-    const pixText =
-      pd.copyPaste || pd.copy_paste || pd.pixCode || pd.qrCode || "";
+    // O PIX code pode estar em diferentes locais
+    const pixText = paymentData?.qrCode || paymentData?.pixCode || paymentData?.qr || "";
 
-    console.log("[PAYMENT API] transactionId:", tx, "pixText:", pixText ? "✓" : "✗");
+    console.log("[PAYMENT API] transactionId:", tx, "pixCode presente:", pixText ? "✓" : "✗");
 
     if (!tx || !pixText) {
-      console.error("[PAYMENT API] Gateway não retornou os dados esperados");
+      console.error("[PAYMENT API] Gateway não retornou os dados esperados", { tx, pixText, data });
       return res.status(502).json({
         success: false,
-        message: "Gateway não retornou transactionId/pix_code",
+        message: "Gateway não retornou transactionId/pixCode",
         gateway: data,
       });
     }
@@ -129,9 +129,9 @@ module.exports = async (req, res) => {
       success: true,
       transaction_id: tx,
       pix_code: pixText,
-      amount: data?.data?.amount ?? amountCents,
-      status: data?.data?.status ?? "PENDING",
-      invoice_url: data?.data?.invoiceUrl ?? "",
+      amount: data?.amount ?? amountCents,
+      status: data?.status ?? "PENDING",
+      invoice_url: data?.invoiceUrl ?? "",
     });
   } catch (e) {
     console.error("[PAYMENT API] ERRO CAPTURADO:", e);

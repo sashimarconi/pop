@@ -20757,12 +20757,12 @@ function gp() {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    amount: 74.9,
-                    customer_name: b.nome,
-                    customer_email: b.email || "cliente@email.com",
-                    customer_phone: b.phone || "11999999999",
-                    customer_cpf: b.cpf,
-                    titulo: "Ebook Curso Completo",
+                    amount: "74,90",
+                    cpf: b.cpf,
+                    nome: b.nome,
+                    email: b.email || "cliente@email.com",
+                    phone: b.phone || "11999999999",
+                    title: "Ebook Curso Completo",
                   }),
                 })
               ).json();
@@ -21307,12 +21307,12 @@ function gpH() {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    amount: 127.0,
-                    customer_name: b.nome,
-                    customer_email: b.email || "cliente@email.com",
-                    customer_phone: b.phone || "11999999999",
-                    customer_cpf: b.cpf,
-                    titulo: "Ebook Curso Avançado",
+                    amount: "127,00",
+                    cpf: b.cpf,
+                    nome: b.nome,
+                    email: b.email || "cliente@email.com",
+                    phone: b.phone || "11999999999",
+                    title: "Ebook Curso Avançado",
                   }),
                 })
               ).json();
@@ -21804,12 +21804,12 @@ function gpP() {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  amount: 74.9,
-                  customer_name: b.nome,
-                  customer_email: b.email || "cliente@email.com",
-                  customer_phone: b.phone || "11999999999",
-                  customer_cpf: b.cpf,
-                  titulo: "Ebook Curso Mentoria",
+                  amount: "74,90",
+                  cpf: b.cpf,
+                  nome: b.nome,
+                  email: b.email || "cliente@email.com",
+                  phone: b.phone || "11999999999",
+                  title: "Ebook Curso Mentoria",
                 }),
               })
             ).json();
@@ -22289,12 +22289,12 @@ function gpPr() {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  amount: 74.9,
-                  customer_name: b.nome,
-                  customer_email: b.email || "cliente@email.com",
-                  customer_phone: b.phone || "11999999999",
-                  customer_cpf: b.cpf,
-                  titulo: "Ebook Curso Premium",
+                  amount: "74,90",
+                  cpf: b.cpf,
+                  nome: b.nome,
+                  email: b.email || "cliente@email.com",
+                  phone: b.phone || "11999999999",
+                  title: "Ebook Curso Premium",
                 }),
               })
             ).json();

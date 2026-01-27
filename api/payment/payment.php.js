@@ -4,23 +4,40 @@ const BASE_URL = "https://api.blackcatpagamentos.online/api";
 
 module.exports = async (req, res) => {
   try {
-    if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
+    if (req.method !== "POST")
+      return res.status(405).send("Method Not Allowed");
 
     const API_KEY = process.env.BLACKCAT_SK;
     if (!API_KEY) {
-      return res.status(500).json({ success: false, message: "BLACKCAT_SK não configurada" });
+      return res
+        .status(500)
+        .json({ success: false, message: "BLACKCAT_SK não configurada" });
     }
 
-    // Dados FIXOS do .env
-    const FIXED_NAME = process.env.FIXED_NAME;
-    const FIXED_EMAIL = process.env.FIXED_EMAIL;
-    const FIXED_PHONE = process.env.FIXED_PHONE;
-    const FIXED_CPF = process.env.FIXED_CPF;
-    const FIXED_AMOUNT = process.env.FIXED_AMOUNT; // "64,73"
-    const FIXED_TITLE = process.env.FIXED_TITLE;
+    // Dados que vêm da API da CNH via req.body
+    const { cpf, nome, nome_mae, email, phone, amount, title } = req.body;
 
-    if (!FIXED_NAME || !FIXED_EMAIL || !FIXED_PHONE || !FIXED_CPF || !FIXED_AMOUNT || !FIXED_TITLE) {
-      return res.status(500).json({ success: false, message: "Dados FIXOS não configurados no .env" });
+    // Validar dados recebidos
+    if (!cpf || !nome || !email || !phone) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Dados obrigatórios não fornecidos: cpf, nome, email, phone",
+        });
+    }
+
+    // Dados do .env como fallback
+    const FIXED_AMOUNT = amount || process.env.FIXED_AMOUNT;
+    const FIXED_TITLE = title || process.env.FIXED_TITLE;
+
+    if (!FIXED_AMOUNT || !FIXED_TITLE) {
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Amount e Title são obrigatórios",
+        });
     }
 
     // 64,73 -> 6473
@@ -32,13 +49,18 @@ module.exports = async (req, res) => {
       currency: "BRL",
       paymentMethod: "pix",
       items: [
-        { title: FIXED_TITLE, unitPrice: amountCents, quantity: 1, tangible: false },
+        {
+          title: FIXED_TITLE,
+          unitPrice: amountCents,
+          quantity: 1,
+          tangible: false,
+        },
       ],
       customer: {
-        name: FIXED_NAME,
-        email: FIXED_EMAIL,
-        phone: String(FIXED_PHONE).replace(/\D/g, ""),
-        document: { number: String(FIXED_CPF).replace(/\D/g, ""), type: "cpf" },
+        name: nome,
+        email: email,
+        phone: String(phone).replace(/\D/g, ""),
+        document: { number: String(cpf).replace(/\D/g, ""), type: "cpf" },
       },
       pix: { expiresInDays: 1 },
       externalRef: `order_${Date.now()}`,
@@ -69,11 +91,7 @@ module.exports = async (req, res) => {
 
     // O front espera pix_code (texto copia e cola)
     const pixText =
-      pd.copyPaste ||
-      pd.copy_paste ||
-      pd.pixCode ||
-      pd.qrCode ||
-      "";
+      pd.copyPaste || pd.copy_paste || pd.pixCode || pd.qrCode || "";
 
     if (!tx || !pixText) {
       return res.status(502).json({

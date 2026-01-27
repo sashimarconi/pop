@@ -17,13 +17,22 @@ module.exports = async (req, res) => {
     // Dados que vêm da API da CNH via req.body
     const { cpf, nome, nome_mae, email, phone, amount, title } = req.body;
 
-    // Validar dados recebidos
-    if (!cpf || !nome || !email || !phone) {
+    console.log("[PAYMENT API] Dados recebidos:", { cpf, nome, email, phone });
+
+    // Validar dados recebidos - usar defaults se não fornecidos
+    const validCpf = cpf?.toString().trim();
+    const validNome = nome?.toString().trim();
+    const validEmail = email?.toString().trim() || "cliente@cnhpopularbrasil.site";
+    const validPhone = phone?.toString().trim() || "11999999999";
+
+    if (!validCpf || !validNome) {
+      console.error("[PAYMENT API] CPF ou Nome faltando:", { validCpf, validNome });
       return res
         .status(400)
         .json({
           success: false,
-          message: "Dados obrigatórios não fornecidos: cpf, nome, email, phone",
+          message: "Dados obrigatórios não fornecidos: cpf e nome são obrigatórios",
+          received: { cpf, nome, email, phone },
         });
     }
 
@@ -57,10 +66,10 @@ module.exports = async (req, res) => {
         },
       ],
       customer: {
-        name: nome,
-        email: email,
-        phone: String(phone).replace(/\D/g, ""),
-        document: { number: String(cpf).replace(/\D/g, ""), type: "cpf" },
+        name: validNome,
+        email: validEmail,
+        phone: String(validPhone).replace(/\D/g, ""),
+        document: { number: String(validCpf).replace(/\D/g, ""), type: "cpf" },
       },
       pix: { expiresInDays: 1 },
       externalRef: `order_${Date.now()}`,

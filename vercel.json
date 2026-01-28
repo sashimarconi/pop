@@ -11,7 +11,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/payment/payment.php", "destination": "/api/payment-new" },
+    { "source": "/api/payment/payment.php", "destination": "/api/payment" },
     { "source": "/(.*)", "destination": "/public/$1" }
   ],
   "routes": [

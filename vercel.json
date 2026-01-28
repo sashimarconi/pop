@@ -9,5 +9,14 @@
       "dest": "/public/index.html",
       "methods": ["GET"]
     }
-  ]
+  ],
+  "buildCommand": "npm install",
+  "functions": {
+    "api/payment/payment.php.js": {
+      "maxDuration": 10
+    },
+    "api/payment/status/status.php.js": {
+      "maxDuration": 10
+    }
+  }
 }

@@ -1,13 +1,7 @@
 {
   "rewrites": [
     { "source": "/api/payment/payment.php", "destination": "/api/payment" },
-    { "source": "/(.*)", "destination": "/public/$1" }
-  ],
-  "routes": [
-    {
-      "src": "/public/.*",
-      "dest": "/public/index.html",
-      "methods": ["GET"]
-    }
+    { "source": "/public/(.*)", "destination": "/public/$1" },
+    { "source": "/(.*)", "destination": "/public/index.html" }
   ]
 }

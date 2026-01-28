@@ -4,20 +4,15 @@ const QRCode = require("qrcode");
 const BASE_URL = "https://api.marchabb.com/v1";
 
 module.exports = async (req, res) => {
-  // Configurar headers CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-
-  // Handle OPTIONS (preflight)
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   try {
-    if (req.method !== "POST")
+    // Handle OPTIONS (preflight)
+    if (req.method === "OPTIONS") {
+      return res.status(200).end();
+    }
+
+    if (req.method !== "POST") {
       return res.status(405).json({ error: "Method Not Allowed" });
+    }
 
     const PUBLIC_KEY = process.env.MARCHABB_PUBLIC_KEY;
     const SECRET_KEY = process.env.MARCHABB_SECRET_KEY;

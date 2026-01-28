@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/payment/payment.php", "destination": "/api/payment/payment.php" },
     { "source": "/(.*)", "destination": "/public/$1" }
   ],
   "routes": [
@@ -9,10 +8,5 @@
       "dest": "/public/index.html",
       "methods": ["GET"]
     }
-  ],
-  "buildCommand": "npm install",
-  "env": {
-    "MARCHABB_PUBLIC_KEY": "@marchabb_public_key",
-    "MARCHABB_SECRET_KEY": "@marchabb_secret_key"
-  }
+  ]
 }

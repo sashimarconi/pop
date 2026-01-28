@@ -10,7 +10,7 @@
  */
 
 // Importar o módulo de pagamento diretamente
-const paymentModule = require('./api/payment/payment.php.js');
+const paymentModule = require('./api/payment.js');
 
 const testData = {
   cpf: "07317831905",

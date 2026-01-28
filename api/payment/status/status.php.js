@@ -1,40 +1,41 @@
-const BASE_URL = "https://api.blackcatpagamentos.online/api";
+const BASE_URL = "https://api.marchabb.com/v1";
 
 module.exports = async (req, res) => {
   try {
     if (req.method !== "GET") return res.status(405).send("Method Not Allowed");
 
-    const API_KEY = process.env.BLACKCAT_SK;
-    if (!API_KEY) return res.status(500).json({ success: false, message: "BLACKCAT_SK não configurada" });
+    const PUBLIC_KEY = process.env.MARCHABB_PUBLIC_KEY;
+    const SECRET_KEY = process.env.MARCHABB_SECRET_KEY;
+    if (!PUBLIC_KEY || !SECRET_KEY) return res.status(500).json({ success: false, message: "Chaves da Marchabb não configuradas" });
 
     const id = String(req.query.id || req.query.transaction_id || "").trim();
     if (!id) return res.status(400).json({ success: false, message: "id é obrigatório" });
 
-    // tenta alguns caminhos comuns (depende da Blackcat)
-    const candidates = [
-      `${BASE_URL}/sales/get-sale/${encodeURIComponent(id)}`,
-      `${BASE_URL}/sales/get-sale?transactionId=${encodeURIComponent(id)}`,
-      `${BASE_URL}/sales/get-sale?transaction_id=${encodeURIComponent(id)}`,
-      `${BASE_URL}/sales/get-sale?id=${encodeURIComponent(id)}`,
-    ];
+    // Criar autenticação Basic Auth para Marchabb
+    const auth = "Basic " + Buffer.from(PUBLIC_KEY + ":" + SECRET_KEY).toString("base64");
 
-    let last = null;
-    for (const url of candidates) {
-      const r = await fetch(url, {
-        headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
-      });
-      const j = await r.json().catch(() => ({}));
-      last = { ok: r.ok, status: r.status, body: j };
-      if (r.ok && j?.success === true) {
-        const status = j?.data?.status || j?.data?.paymentStatus || "PENDING";
-        return res.json({ success: true, status });
-      }
+    // Endpoint para buscar transação na Marchabb
+    const url = `${BASE_URL}/transactions/${encodeURIComponent(id)}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": auth,
+      },
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.ok && data?.id) {
+      const status = data?.status || "PENDING";
+      return res.json({ success: true, status, transaction: data });
     }
 
     return res.status(502).json({
       success: false,
       message: "Não foi possível consultar status",
-      last,
+      response: { status: response.status, data },
     });
   } catch (e) {
     return res.status(500).json({ success: false, message: "Erro interno", error: String(e?.message || e) });

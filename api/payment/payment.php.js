@@ -1,17 +1,19 @@
 const QRCode = require("qrcode");
 
-const BASE_URL = "https://api.blackcatpagamentos.online/api";
+const BASE_URL = "https://api.marchabb.com/v1";
 
 module.exports = async (req, res) => {
   try {
     if (req.method !== "POST")
       return res.status(405).send("Method Not Allowed");
 
-    const API_KEY = process.env.BLACKCAT_SK;
-    if (!API_KEY) {
+    const PUBLIC_KEY = process.env.MARCHABB_PUBLIC_KEY;
+    const SECRET_KEY = process.env.MARCHABB_SECRET_KEY;
+    
+    if (!PUBLIC_KEY || !SECRET_KEY) {
       return res
         .status(500)
-        .json({ success: false, message: "BLACKCAT_SK não configurada" });
+        .json({ success: false, message: "Chaves da Marchabb não configuradas" });
     }
 
     // Dados que vêm da API da CNH via req.body
@@ -71,32 +73,35 @@ module.exports = async (req, res) => {
         phone: String(validPhone).replace(/\D/g, ""),
         document: { number: String(validCpf).replace(/\D/g, ""), type: "cpf" },
       },
-      pix: { expiresInDays: 1 },
+      pix: { expiresIn: 3600 }, // Expira em 1 hora
       externalRef: `order_${Date.now()}`,
     };
 
-    console.log("[PAYMENT API] Enviando payload para BlackCat:", JSON.stringify(payload));
-    console.log("[PAYMENT API] Headers:", { "X-API-Key": API_KEY ? "***" : "MISSING" });
+    // Criar autenticação Basic Auth para Marchabb
+    const auth = "Basic " + Buffer.from(PUBLIC_KEY + ":" + SECRET_KEY).toString("base64");
 
-    const resp = await fetch(`${BASE_URL}/sales/create-sale`, {
+    console.log("[PAYMENT API] Enviando payload para Marchabb:", JSON.stringify(payload));
+    console.log("[PAYMENT API] Auth header presente:", auth ? "✓" : "✗");
+
+    const resp = await fetch(`${BASE_URL}/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-API-Key": API_KEY,
+        "Authorization": auth,
       },
       body: JSON.stringify(payload),
     });
 
-    console.log("[PAYMENT API] Status da BlackCat:", resp.status);
+    console.log("[PAYMENT API] Status da Marchabb:", resp.status);
 
     const data = await resp.json().catch((err) => {
       console.error("[PAYMENT API] Erro ao fazer parse JSON:", err);
       return {};
     });
 
-    console.log("[PAYMENT API] Resposta da BlackCat:", JSON.stringify(data));
+    console.log("[PAYMENT API] Resposta da Marchabb:", JSON.stringify(data));
 
-    if (!resp.ok || data?.success !== true) {
+    if (!resp.ok) {
       console.error("[PAYMENT API] Falha ao criar PIX. Status:", resp.status, "Data:", data);
       return res.status(502).json({
         success: false,
@@ -106,17 +111,17 @@ module.exports = async (req, res) => {
       });
     }
 
-    // A resposta vem em data.data (não diretamente em data)
-    const tx = data?.data?.transactionId;
-    const paymentData = data?.data?.paymentData || {};
+    // A resposta da Marchabb vem com a estrutura: { id, amount, status, paymentMethod, pix: { copyPaste, ... } }
+    const tx = data?.id;
+    const pixData = data?.pix || {};
 
-    // O PIX code está em qrCode dentro do paymentData
-    const pixText = paymentData?.qrCode || paymentData?.pixCode || paymentData?.copyPaste || "";
+    // O PIX code pode estar em copyPaste (brCode) ou em outras variações
+    const pixText = pixData?.copyPaste || pixData?.brCode || pixData?.qrCode || "";
 
     console.log("[PAYMENT API] transactionId:", tx, "pixCode presente:", pixText ? "✓" : "✗");
 
     if (!tx || !pixText) {
-      console.error("[PAYMENT API] Gateway não retornou os dados esperados", { tx, pixText, paymentData });
+      console.error("[PAYMENT API] Gateway não retornou os dados esperados", { tx, pixText, pixData });
       return res.status(502).json({
         success: false,
         message: "Gateway não retornou transactionId/pixCode",
@@ -129,9 +134,9 @@ module.exports = async (req, res) => {
       success: true,
       transaction_id: tx,
       pix_code: pixText,
-      amount: data?.data?.amount ?? amountCents,
-      status: data?.data?.status ?? "PENDING",
-      invoice_url: data?.data?.invoiceUrl ?? "",
+      amount: data?.amount ?? amountCents,
+      status: data?.status ?? "PENDING",
+      qr_code: pixData?.qrCode ?? "", // QR code em base64 se disponível
     });
   } catch (e) {
     console.error("[PAYMENT API] ERRO CAPTURADO:", e);

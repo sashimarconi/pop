@@ -1,6 +1,6 @@
 const QRCode = require("qrcode");
 
-// Marchabb API Integration v2.0
+// Marchabb API Integration v2.1
 const BASE_URL = "https://api.marchabb.com/v1";
 
 module.exports = async (req, res) => {

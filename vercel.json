@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/payment/payment.php", "destination": "/api/payment" },
+    { "source": "/api/payment/payment.php", "destination": "/api/payment-new" },
     { "source": "/(.*)", "destination": "/public/$1" }
   ],
   "routes": [

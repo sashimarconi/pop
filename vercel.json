@@ -1,15 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
-    }
-  ],
   "rewrites": [
     { "source": "/api/payment/payment.php", "destination": "/api/payment" },
     { "source": "/(.*)", "destination": "/public/$1" }

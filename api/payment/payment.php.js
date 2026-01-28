@@ -111,12 +111,12 @@ module.exports = async (req, res) => {
       });
     }
 
-    // A resposta da Marchabb vem com a estrutura: { id, amount, status, paymentMethod, pix: { copyPaste, ... } }
+    // A resposta da Marchabb vem com a estrutura: { id, amount, status, paymentMethod, pix: { qrcode, ... } }
     const tx = data?.id;
     const pixData = data?.pix || {};
 
-    // O PIX code pode estar em copyPaste (brCode) ou em outras variações
-    const pixText = pixData?.copyPaste || pixData?.brCode || pixData?.qrCode || "";
+    // O PIX code está em qrcode (brCode)
+    const pixText = pixData?.qrcode || pixData?.copyPaste || pixData?.brCode || "";
 
     console.log("[PAYMENT API] transactionId:", tx, "pixCode presente:", pixText ? "✓" : "✗");
 

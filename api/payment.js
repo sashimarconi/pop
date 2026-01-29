@@ -115,11 +115,11 @@ async function handlePaymentRequest(req, res) {
 
     return res.status(200).json({
       success: true,
-      transaction_id: tx,
-      pix_code: pixText,
+      transaction_id: String(tx),
+      pix_code: String(pixText),
       amount: data?.amount || amountCents,
-      status: data?.status || "PENDING",
-      qr_code: pixText,
+      status: String(data?.status || "PENDING"),
+      qr_code: String(pixText),
     });
 
   } catch (error) {
